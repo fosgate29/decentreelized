@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import './i18n';
+
 import { Dapp } from "./components/Dapp";
 
 // We import bootstrap here, but you can remove if you want
