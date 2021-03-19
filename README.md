@@ -1,4 +1,6 @@
-built using https://github.com/nomiclabs/hardhat-hackathon-boilerplate
+Built using https://github.com/nomiclabs/hardhat-hackathon-boilerplate <img src="/frontend/public/logo192.png" alt="HardHat log" width="50px"/>
+
+
 
 # decentreelized
 NFT Ethglobal Hackathon
