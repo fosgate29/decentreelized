@@ -50,14 +50,18 @@ export function Map({ zoomLevel }) {
       }
 
     return(
-    <div>
-      <h4>{w3words[0] ? '///':''}{w3words[0]}</h4>
-      <h6> {w3words[0] ? <img alt="Flag" src={w3words[3]}></img>:''}{ w3words[0] ? ' ' + t('near') + ' ':''}{w3words[1]}</h6>
-  
-      <div class="d-flex" style={{height: "400px", width:"400px"}}>
-
+    <div style={{font: "Source Sans Pro"}}>
+        <div style={{"fontWeight": 600, width: "200px", height: "38px", left: "45px", top: "42px"}}> 
+          <div style={{background: "#FFFFFF", boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)"}}>
+            {w3words[0] ? <span style={{color:"red"}}>///</span>:''}{w3words[0]}
+          </div>
+        </div>   
+      <div >
+        {w3words[0] ? <img alt="Flag" src={w3words[3]}></img>:''}{ w3words[0] ? ' ' + t('near') + ' ':''}{w3words[1]}
+      </div>
+      <div class="d-flex" style={{ height: "400px", width:"400px"}}>
         <GoogleMapReact 
-          bootstrapURLKeys={{ key: 'AIzaSyAdXz62qrHE5-R4tzdUbsgYLHX9BiJ5IGM' }}
+          bootstrapURLKeys={{ key: 'AIzaSyB6LdsRDkKpzudVSsomy4MmBzV7z3cN_HE' }}
           defaultCenter={location}
           defaultZoom={15}
           options={mapOptions}
