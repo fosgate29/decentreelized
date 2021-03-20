@@ -25,6 +25,21 @@ async function main() {
 
   console.log("Token address:", token.address);
 
+  const TreeCampaign = await ethers.getContractFactory("TreeCampaign");
+  const treeCampaign = await TreeCampaign.deploy();
+  await treeCampaign.deployed();
+
+  console.log("TreeCampaign address:", treeCampaign.address);
+
+  console.log("Account balance:", (await deployer.getBalance()).toString());
+
+  const TreeCampaignVault = await ethers.getContractFactory("TreeCampaignVault");
+  const treeCampaignVault = await TreeCampaignVault.deploy();
+  await treeCampaignVault.deployed();
+
+  console.log("TreeCampaignVault address:", treeCampaignVault.address);
+
+
   // We also save the contract's artifacts and address in the frontend directory
   saveFrontendFiles(token);
 }

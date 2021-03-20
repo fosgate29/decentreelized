@@ -54,15 +54,6 @@
     "react-typing-effect": "2.0.4",
     "redux": "4.0.5",
     "redux-logger": "3.0.6",
-    "reselect": "4.0.0",
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
+    "reselect": "4.0.0"
+  }
 }
