@@ -9,40 +9,23 @@ contract Token is ERC721, Ownable {
     address payable public _owner;
     mapping(uint256 => bool) public minted;
 
-    event Mint(address owner, uint256 id, string uri);
+    event Mint(address from, address to, uint256 id);
 
     constructor() ERC721("Decentreelized Token", "TRE") {
         _owner = msg.sender;
     }
 
-    function mintToken(string memory _tokenURI)
-        public
-        onlyOwner
-        returns (bool)
-    {
+    function mintToken(
+        address _to,
+        uint256 _tokenID,
+        string memory _tokenURI
+    ) public onlyOwner returns (bool) {
         uint256 _tokenId = totalSupply() + 1;
 
         _mint(address(this), _tokenId);
         _setTokenURI(_tokenId, _tokenURI);
 
         return true;
-    }
 
-    function donate(uint256 _id) external payable {
-        _validate(_id); //check req. for trade
-        _trade(_id); //swap nft for eth
-
-        emit Mint(msg.sender, _id, tokenURI(_id));
+        emit Mint(address(0), to, _tokenId);
     }
-
-    function _validate(uint256 _id) internal {
-        require(_exists(_id), "Error, wrong Token id"); //not exists
-        require(!minted[_id], "Error, Token is minted"); //already minted
-    }
-
-    function _trade(uint256 _id) internal {
-        _transfer(address(this), msg.sender, _id); //nft to user
-        _owner.transfer(msg.value); //eth to owner
-        minted[_id] = true; //nft is minted
-    }
-}
