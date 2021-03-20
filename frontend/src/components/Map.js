@@ -1,9 +1,9 @@
 import React, {useEffect} from "react";
 import GoogleMapReact from 'google-map-react'
-import Marker from 'google-map-react'
 import { useTranslation } from 'react-i18next';
 import fleekStorage from '@fleekhq/fleek-storage-js'
 import axiosapi from "../axiosapi";
+import Marker from './Marker';
 
   const api = require("@what3words/api");       
   api.setOptions({ key: "VXBYI3XZ" });
@@ -104,6 +104,8 @@ export function Map({ zoomLevel }) {
         });
     }
 
+    const AnyReactComponent = ({text}: any) => <div className="marker" >{text}</div>;
+
     function handleClick(e) {
         //e.preventDefault();
         api.convertTo3wa({lat:e.lat, lng:e.lng})
@@ -138,9 +140,15 @@ export function Map({ zoomLevel }) {
             center={location}
             defaultZoom={15}
             options={mapOptions}
-            onClick={handleClick}        
+            onClick={handleClick} 
+            yesIWantToUseGoogleMapApiInternals       
           > 
-             
+              <Marker
+                lat={location.lat}
+                lng={location.lng}
+                text="My Marker"
+                color="blue"
+              />
           </GoogleMapReact>
       </div>
 
@@ -153,7 +161,7 @@ export function Map({ zoomLevel }) {
           <div className="card-body">
             <h5 className="card-title">{nfttree.w3w}</h5>
             <p className="card-text">{nfttree.description}</p>
-            <a href="#" onClick={() => onClickShowMap(nfttree.w3w)} className="card-link">// {nfttree.w3w}</a>
+            <a href="#" onClick={() => onClickShowMap(nfttree.w3w)} className="card-link">/// {nfttree.w3w}</a>
           </div>
         </div>
       ))}
