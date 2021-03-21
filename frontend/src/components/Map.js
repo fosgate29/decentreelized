@@ -1,22 +1,27 @@
 import React, {useEffect} from "react";
 import GoogleMapReact from 'google-map-react'
 import { useTranslation } from 'react-i18next';
-import fleekStorage from '@fleekhq/fleek-storage-js'
+//import fleekStorage from '@fleekhq/fleek-storage-js'
 import axiosapi from "../axiosapi";
 import Marker from './Marker';
 
+import { NFTStorage, Blob } from 'nft.storage'
+
+const apiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJnaXRodWJ8MjYwMjUxMjgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTYxNjMzMDExNDUxNSwibmFtZSI6ImRlY2VudHJlZWxpemVkIn0.nM58pf4qAJKiD4jTSiLqd1dHRMVQn5aYkasKAeIGU0w'
+const client = new NFTStorage({ token: apiKey })
+
+const content = new Blob(['hello world'])
+client.storeBlob(content).then(cid =>{console.log(cid)})
+
+//console.log(cid)
+
   const api = require("@what3words/api");       
   api.setOptions({ key: "VXBYI3XZ" });
-  api.convertToCoordinates("challenger.anyone.hassled")
-  .then(data => console.log(data));
 
   const mapOptions = {
     mapTypeId: 'satellite',
     mapTypeControl: true,
   };
-
-  api.availableLanguages()
-  .then(data => console.log(data));
 
 export function Map({ farmerAddress }) {  
 
@@ -36,16 +41,13 @@ export function Map({ farmerAddress }) {
     const fetchData = async () => {
       const {data, status} = await axiosapi.nfts.getAllFromFarmer(farmerAddress);
       if(status === 200){
-        console.log(data);
         setNftTrees(data);
       }
     }
 
     const fetchDataMinted = async () => {
       const {data, status} = await axiosapi.nfts.getAllMintedFromFarmer(farmerAddress);
-      console.log(data)
       if(status === 200){
-        console.log(data);
         setNftTreesMinted(data);
       }
     }
@@ -77,16 +79,19 @@ export function Map({ farmerAddress }) {
 
       if(selectedFile && w3words[0]){
         setSpinner(true);
-        const uploadedFile = fleekStorage.upload({
+        /*const uploadedFile = fleekStorage.upload({
           apiKey: 'CkjSqoo8LGad8ZSWmSSUng==',
           apiSecret: 'MZHypCPjUkUmsCHRc2jpT2IKfDKtmsgN4xQ9OVOxVPw=',
           key: farmerAddress+'/' + selectedFile.name,
           data: selectedFile,
-        }).then( uploadedFile => { 
-          setSelectedFileHash(uploadedFile.publicUrl);
-
+        }).*/
+        const content = new Blob([selectedFile])
+        const uploadedFile = client.storeBlob(content).then( uploadedFile => { 
+          console.log(uploadedFile)
+          setSelectedFileHash(uploadedFile);
+          const imageNft = 'https://'+uploadedFile+'.ipfs.dweb.link/'
           newTree = {w3w: w3words[0] ,
-                     image: uploadedFile.publicUrl,
+                     image: imageNft,
                      info: info,
                      description: description,
                      farmer_address: farmerAddress }
@@ -103,12 +108,8 @@ export function Map({ farmerAddress }) {
     };
 
     function onClickShowMap(w3w){
-      //const w3w = e.value;
-      //console.log(w3w);
-      //setLocation
       api.convertToCoordinates(w3w)
         .then(data => {
-          console.log(data); 
           setLocation({lat: data.coordinates.lat,lng: data.coordinates.lng,});
           showW3WText(w3w);
         });
@@ -128,17 +129,12 @@ export function Map({ farmerAddress }) {
   }
 
     function handleClick(e) {
-        //e.preventDefault();
         api.convertTo3wa({lat:e.lat, lng:e.lng})
         .then(data => setW3words([data.words, 
           data.nearestPlace, 
           data.country,
           './flags/'+data.country + '@2x.png'
           ]) );
-
-        api.convertTo3wa({lat:e.lat, lng:e.lng})
-        .then(data => console.log(data)) ;
-        
       }
 
     return(

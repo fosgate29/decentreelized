@@ -15,6 +15,7 @@
     "i18next": "^19.9.2",
     "i18next-browser-languagedetector": "^6.0.1",
     "i18next-http-backend": "^1.1.1",
+    "nft.storage": "^0.3.8",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-i18next": "^11.8.10",
