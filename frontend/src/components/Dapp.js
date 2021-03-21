@@ -19,6 +19,7 @@ import { TransactionErrorMessage } from "./TransactionErrorMessage";
 import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 import { NoTokensMessage } from "./NoTokensMessage";
 import { Map } from "./Map";
+import { DonorView } from "./DonorView";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
@@ -159,8 +160,12 @@ export class Dapp extends React.Component {
           </div>
         </div>
 
-        <div >
+       {/* <div >
               <Map />
+        </div> */}
+
+        <div >
+              <DonorView />
         </div>
 
 
