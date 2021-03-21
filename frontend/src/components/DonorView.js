@@ -18,7 +18,7 @@ import Marker from './Marker';
   api.availableLanguages()
   .then(data => console.log(data));
 
-export function Map({ zoomLevel }) {  
+export function DonorView({ zoomLevel }) {
 
     const endpoint = 'https://jsonbox.io/box_5f924cceba34766ac835';
 
@@ -33,9 +33,8 @@ export function Map({ zoomLevel }) {
     const [nftTrees, setNftTrees] = React.useState([]);
 
     const fetchData = async () => {
-      const {data, status} = await axiosapi.nfts.getAllFromFarmer();
+      const {data, status} = await axiosapi.nfts.getAll();
       if(status === 200){
-        console.log(data);
         setNftTrees(data);
       }
 
@@ -92,9 +91,6 @@ export function Map({ zoomLevel }) {
     };
 
     function onClickShowMap(w3w){
-      //const w3w = e.value;
-      //console.log(w3w);
-      //setLocation
       api.convertToCoordinates(w3w)
         .then(data => {
           console.log(data); 
@@ -122,7 +118,7 @@ export function Map({ zoomLevel }) {
 
     return(
     <div style={{font: "Source Sans Pro"}}>
-    <h2>Setup and offer a tree</h2>
+    <h2>Find a tree</h2>
         <div style={{"fontWeight": 600, width: "200px", height: "38px", left: "45px", top: "42px"}}> 
           <div style={{background: "#FFFFFF", boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)"}}>
             {w3words[0] ? <span style={{color:"red"}}>///</span>:''}{w3words[0]}
@@ -146,15 +142,13 @@ export function Map({ zoomLevel }) {
               <Marker
                 lat={location.lat}
                 lng={location.lng}
-                text="My Marker"
-                color="blue"
               />
           </GoogleMapReact>
       </div>
 
       <hr />
       <hr />
-      <h4>My Trees:</h4>
+      <h4>Mint NFTrees:</h4>
       {nftTrees.map((nfttree, index) => (
         <div className="card" style={{width: "18rem"}}>
           <img src={nfttree.image} className="card-img-top img-thumbnail img-fluid" />
@@ -162,63 +156,12 @@ export function Map({ zoomLevel }) {
             <h5 className="card-title">{nfttree.w3w}</h5>
             <p className="card-text">{nfttree.description}</p>
             <a href="#" onClick={() => onClickShowMap(nfttree.w3w)} className="card-link">/// {nfttree.w3w}</a>
+            <a href="#" onClick={() => onClickShowMap(nfttree.w3w)} className="card-link">Mint</a>
           </div>
         </div>
       ))}
 
-      <hr />
-      <h4>Offer a new Tree:</h4>
-      <form>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-              <label for="exampleFormControlInput1">Wikipedia link</label>
-              <input class="form-control" onChange={onInfoChange} name="wikipediaInfo" type="text" placeholder="https://en.wikipedia.org/wiki/Handroanthus_impetiginosus" />
-              <small id="wikipediaHelpBlock" className="form-text text-muted">
-                Add Wikipedia link about the specie of this tree to give more info.
-              </small>
-          </div>
-          <div class="form-group col-md-6">
-              <label for="exampleFormControlTextarea1">Select a file</label>
-              <div class="custom-file">
-                    <input type="file" onChange={onFileChange} className="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" />
-                    <label className="custom-file-label" for="inputGroupFile01">{selectedFile ? selectedFile.name : 'Choose file' }</label>   
-                    <small id="wikipediaHelpBlock" className="form-text text-muted">
-                      Select a picture of this area.
-                    </small>
-              </div>
-          </div>
-        </div>
-        <div class="form-row">
-          <div class="form-group col-md-6">
-              <label for="exampleFormControlTextarea1">Description:</label>
-              <textarea name="description" onChange={onDescriptionChange} className="form-control" rows="3"></textarea>
-              <small id="descriptionHelpBlock" className="form-text text-muted">
-                Write about why you like this area, this tree, a brief history about it or you.
-              </small>
-          </div>
-          <div class="form-group col-md-1">
-             <label for="exampleFormControlTextarea1"></label>
-             <input className="btn btn-primary" onClick={onSubmit} type="submit" value="Offer Tree" />                     
-          </div>
-          <div class="form-group col-md-5">
-            <div>
-              {spinner ? <div className="spinner-border text-success" role="status">
-                          <span className="sr-only">Loading...</span> </div> 
-                      : selectedFileHash ? selectedFileHash : ''}
-              </div>
-          </div>
-        </div>
-      </form>
-      
-
-      
-      
     </div>
-
-
-
     )
   
 }
-
-
