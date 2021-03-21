@@ -174,7 +174,7 @@ export class Dapp extends React.Component {
         {this.state.openFarmer ? <div ><Map farmerAddress={this.state.selectedAddress}/></div> : ''}
         {this.state.openDonor ? <div ><DonorView ownerAddress={this.state.selectedAddress}  mint={(uri) => this._mint(uri)} /></div> : ''}
         {this.state.openNft ? <div ><MyNFT ownerAddress={this.state.selectedAddress}/></div> : ''}
-        {this.state.openHome ? <div ><Home/></div> : ''}
+        {this.state.openHome ? <div ><Home userAddress={this.state.selectedAddress}/></div> : ''}
           </div>
           <div className="col-1"></div>
 

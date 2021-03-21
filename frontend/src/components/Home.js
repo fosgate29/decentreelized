@@ -6,10 +6,11 @@ import axiosapi from "../axiosapi";
 import Marker from './Marker';
 
 
-export function Home({ ownerAddress }) {
+export function Home({ userAddress }) {
 
     const { t } = useTranslation(); 
     const [poapEvent, setPoapEvent] = React.useState(null);
+    const [poapBadge, setPoapBadge] = React.useState(null);
 
     const fetchData = async () => {
 
@@ -19,9 +20,19 @@ export function Home({ ownerAddress }) {
       }
 
     }
+
+    const fetchDataBadge = async () => {
+
+        const {data, status} = await axiosapi.nfts.getPOPBadge(userAddress);
+        if(status === 200){
+            setPoapBadge(data);
+        }
+  
+      }
   
     useEffect(()=>{
       fetchData();
+      fetchDataBadge();
     },[])
 
 
@@ -34,20 +45,27 @@ export function Home({ ownerAddress }) {
           
 
           <div className="col-12">
-          <img src="../poap.svg" />
-          <h4>Get your badges here:</h4>
-    
+            <div className="col-4">
+                <img src="../poap.svg" />
+            </div>
+            <div className="col-8">
+                <button type="button" class="btn btn-primary">
+                    POAP Badges <span class="badge badge-light">{poapBadge ? poapBadge.length : '0'}</span>
+                    <span class="sr-only">number of badges</span>
+                </button>
+            </div>
             <div>
-                {poapEvent ?                    
+                {poapBadge ?                    
                 
                 <div>
-                    <img src={poapEvent.image_url} />
+                    <img src={poapBadge[0].event.image_url} />
                     <div class="list-group">
-                        <a href={poapEvent.attributes[5].value} class="list-group-item list-group-item-action active">
-                            Event name: {poapEvent.name}
+                        <a href={poapBadge[0].event.event_url} class="list-group-item list-group-item-action active">
+                            Event name: {poapBadge[0].event.name}
                         </a>
-                        <a href={poapEvent.home_url} class="list-group-item list-group-item-action">Token page</a>
-                        <li class="list-group-item list-group-item-action">Description: {poapEvent.description}</li>                        
+                        <li class="list-group-item list-group-item-action">Start date: {poapBadge[0].event.start_date}</li>
+                        <li class="list-group-item list-group-item-action">City: {poapBadge[0].event.city} - {poapBadge[0].event.country}</li>
+                        <li class="list-group-item list-group-item-action">Description: {poapBadge[0].event.description}</li>                        
                     </div>
                 </div>
 
@@ -56,7 +74,13 @@ export function Home({ ownerAddress }) {
             </div>
 
           </div>
-      </div>
+          <hr />
+          <hr />
+
+
+          </div>
+
+     
 
       <hr />
      </div> 

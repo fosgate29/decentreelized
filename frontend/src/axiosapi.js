@@ -35,6 +35,10 @@ const getPOPEvent = () => {
   return axios.get('https://api.poap.xyz/metadata/1334/478672');
 };
 
+const getPOPBadge = userAddress => {
+  return axios.get('https://api.poap.xyz/actions/scan/'+userAddress);
+};
+
 export default {
   nfts: {
     getAll,
@@ -44,6 +48,7 @@ export default {
     destroynft,
     getAllMintedFromFarmer,
     getAllMintedFromOwner,
-    getPOPEvent
+    getPOPEvent,
+    getPOPBadge
   }
 };
