@@ -18,7 +18,7 @@ import Marker from './Marker';
   api.availableLanguages()
   .then(data => console.log(data));
 
-export function DonorView({ zoomLevel }) {
+export function DonorView({ mint , ownerAddress}) {
 
     const endpoint = 'https://jsonbox.io/box_5f924cceba34766ac835';
 
@@ -58,49 +58,26 @@ export function DonorView({ zoomLevel }) {
       setInfo(e.target.value);
     };    
 
-    // On file upload (click the upload button)
-    function onSubmit(e) {
-      e.preventDefault();
-      
-      let newTree;
-
-      if(selectedFile && w3words[0]){
-        setSpinner(true);
-        const uploadedFile = fleekStorage.upload({
-          apiKey: 'CkjSqoo8LGad8ZSWmSSUng==',
-          apiSecret: 'MZHypCPjUkUmsCHRc2jpT2IKfDKtmsgN4xQ9OVOxVPw=',
-          key: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266/' + selectedFile.name,
-          data: selectedFile,
-        }).then( uploadedFile => { 
-          setSelectedFileHash(uploadedFile.publicUrl);
-
-          newTree = {w3w: w3words[0] ,
-                     image: uploadedFile.publicUrl,
-                     info: info,
-                     description: description,
-                     farmer_address: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266' }
-
-          
-         } ).then( () => {
-              axiosapi.nfts.createnft(newTree).then( res => {
-              setSpinner(false);
-            })
-         } )
-      }
-
-    };
-
     function onClickShowMap(w3w){
       api.convertToCoordinates(w3w)
         .then(data => {
-          console.log(data); 
-          console.log(location)
           setLocation({lat: data.coordinates.lat,lng: data.coordinates.lng,});
-          console.log(location)
+          showW3WText(w3w);
         });
     }
 
     const AnyReactComponent = ({text}: any) => <div className="marker" >{text}</div>;
+
+    function showW3WText(w3w) {
+      api.convertToCoordinates(w3w).then(coo => {
+          api.convertTo3wa({lat:coo.coordinates.lat, lng:coo.coordinates.lng})
+          .then(data => setW3words([data.words, 
+            data.nearestPlace, 
+            data.country,
+            './flags/'+data.country + '@2x.png'
+            ]) );
+      })
+    }
 
     function handleClick(e) {
         //e.preventDefault();
@@ -117,9 +94,14 @@ export function DonorView({ zoomLevel }) {
       }
 
     return(
-    <div style={{font: "Source Sans Pro"}}>
-    <h2>Find a tree</h2>
-        <div style={{"fontWeight": 600, width: "200px", height: "38px", left: "45px", top: "42px"}}> 
+    <div>
+        
+        
+
+      <div className="row">
+          <div className="col-6">
+          <h5>Hi. Thanks for helping. Select some trees to mint a NFTree.</h5>
+          <div style={{"fontWeight": 600, width: "300px", height: "38px", left: "45px", top: "42px"}}> 
           <div style={{background: "#FFFFFF", boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)"}}>
             {w3words[0] ? <span style={{color:"red"}}>///</span>:''}{w3words[0]}
           </div>
@@ -146,20 +128,70 @@ export function DonorView({ zoomLevel }) {
           </GoogleMapReact>
       </div>
 
-      <hr />
-      <hr />
-      <h4>Mint NFTrees:</h4>
-      {nftTrees.map((nfttree, index) => (
-        <div className="card" style={{width: "18rem"}}>
-          <img src={nfttree.image} className="card-img-top img-thumbnail img-fluid" />
-          <div className="card-body">
-            <h5 className="card-title">{nfttree.w3w}</h5>
-            <p className="card-text">{nfttree.description}</p>
-            <a href="#" onClick={() => onClickShowMap(nfttree.w3w)} className="card-link">/// {nfttree.w3w}</a>
-            <a href="#" onClick={() => onClickShowMap(nfttree.w3w)} className="card-link">Mint</a>
           </div>
+          <div className="col-6">
+
+          <h4>Mint NFTrees:</h4>
+          <div class="card-deck">
+{nftTrees.map((nfttree, index) => (
+  <div className="card" style={{width: "18rem"}}>
+  <form
+      onSubmit={(event) => {
+      // This function just calls the mint callback with the
+      // form's data.
+      event.preventDefault();
+
+      const formData = new FormData(event.target);
+      const nftid = formData.get("nftid");
+      const index = formData.get("index");
+      console.log(nftTrees[index])
+
+      const mintedTree = {w3w: nftTrees[index].w3w ,
+                     image:nftTrees[index].image,
+                     info: nftTrees[index].info,
+                     description: nftTrees[index].description,
+                     farmer_address: nftTrees[index].farmer_address,
+                     _id:  nftTrees[index]._id,
+                     owner_address: ownerAddress }
+
+      axiosapi.nfts.mintedNft(mintedTree).then( res => {
+              axiosapi.nfts.destroynft(nftid).then(res => {fetchData()})              
+            })
+
+      const uri = "https://jsonbox.io/box_5f924cceba34766ac835/nftsminted6/" + nftid;
+
+      if (uri) {
+          mint(uri);
+      }
+  }}
+  >
+      <div className="form-group">
+          {console.log(nfttree)}
+              <img src={nfttree.image} className="card-img-top img-thumbnail img-fluid" />
+              <div className="card-body">
+                  <h5 className="card-title" style={{fontSize: "14px"}}>///{nfttree.w3w}</h5>
+                  <p className="card-text">{nfttree.description}</p>
+                  <input hidden className="form-control" type="text" name="nftid" value={nfttree._id} />
+                  <input hidden className="form-control" name="index" value={index} />
+                  
+                  <a href="#" onClick={() => onClickShowMap(nfttree.w3w)} className="card-link">Show on the Map</a>
+                  <div className="form-group">
+                      <input className="btn btn-success" type="submit" value="Mint" />
+                  </div>
+              </div>
+      </div>
+  </form>
+  </div>
+  ))}
+
         </div>
-      ))}
+          </div>
+      </div>
+
+      <hr />
+      <hr /> 
+      
+
 
     </div>
     )

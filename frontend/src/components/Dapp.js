@@ -20,6 +20,7 @@ import { WaitingForTransactionMessage } from "./WaitingForTransactionMessage";
 import { NoTokensMessage } from "./NoTokensMessage";
 import { Map } from "./Map";
 import { DonorView } from "./DonorView";
+import { MyNFT } from "./MyNFT";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
@@ -55,12 +56,16 @@ export class Dapp extends React.Component {
       txBeingSent: undefined,
       transactionError: undefined,
       networkError: undefined,
+      openFarmer: true,
+      openDonor: false,
+      openNft: false,
     };
 
     this.state = this.initialState;
   }
 
   render() {
+
     // Ethereum wallets inject the window.ethereum object. If it hasn't been
     // injected, we instruct the user to install MetaMask.
     if (window.ethereum === undefined) {
@@ -90,20 +95,40 @@ export class Dapp extends React.Component {
       return <Loading />;
     }
 
+    
     // If everything is loaded, we render the application.
-    return (
-      <div className="container p-4">
+    return (      
+      <div className="p-4" style={{ 
+        backgroundImage: "url(./background.png)",
+        backgroundRepeat  : 'no-repeat',
+        backgroundSize: 'cover',
+        fontFamily: "Bungee"
+      }} >
+
+      <ul class="nav justify-content-end">
+        <li class="nav-item">
+          <a class="nav-link" href="#" onClick={() => this.handleOpenFarmer()} >I am a Farmer</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onClick={() => this.handleOpenDonor()} >I am a Donor</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onClick={() => this.handleOpenNft()} >My NFTrees</a>
+        </li>
+      </ul>
+
+
         <div className="row">
+          <div className="col-1"></div>
+          <div className="col-10">
+
+          <div className="row">
           <div className="col-12">
             <h1>
               {this.state.tokenData.name} ({this.state.tokenData.symbol})
             </h1>
             <p>
-              Welcome <b>{this.state.selectedAddress}</b>, you have{" "}
-              <b>
-                {this.state.balance.toString()} {this.state.tokenData.symbol}
-              </b>
-              .
+              Welcome <b>{this.state.selectedAddress}</b>.
             </p>
           </div>
         </div>
@@ -136,38 +161,20 @@ export class Dapp extends React.Component {
 
         <div className="row">
           <div className="col-12">
-            {/*
-              If the user has no tokens, we don't show the Tranfer form
-            */}
-            {this.state.balance.eq(0) && (
-              <NoTokensMessage selectedAddress={this.state.selectedAddress} />
-            )}
+            
 
-            {/*
-              This component displays a form that the user can use to send a 
-              transaction and transfer some tokens.
-              The component doesn't have logic, it just calls the transferTokens
-              callback.
-            */}
-            {this.state.balance.gt(0) && (
-              <Transfer
-                transferTokens={(to, amount) =>
-                  this._transferTokens(to, amount)
-                }
-                tokenSymbol={this.state.tokenData.symbol}
-              />
-            )}
           </div>
         </div>
 
-       {/* <div >
-              <Map />
-        </div> */}
+        {this.state.openFarmer ? <div ><Map farmerAddress={this.state.selectedAddress}/></div> : ''}
+        {this.state.openDonor ? <div ><DonorView ownerAddress={this.state.selectedAddress}  mint={(uri) => this._mint(uri)} /></div> : ''}
+        {this.state.openNft ? <div ><MyNFT ownerAddress={this.state.selectedAddress}/></div> : ''}
+          </div>
+          <div className="col-1"></div>
 
-        <div >
-              <DonorView />
         </div>
 
+        
 
       </div>
     );
@@ -281,23 +288,7 @@ export class Dapp extends React.Component {
     this.setState({ balance });
   }
 
-  // This method sends an ethereum transaction to transfer tokens.
-  // While this action is specific to this application, it illustrates how to
-  // send a transaction.
-  async _transferTokens(to, amount) {
-    // Sending a transaction is a complex operation:
-    //   - The user can reject it
-    //   - It can fail before reaching the ethereum network (i.e. if the user
-    //     doesn't have ETH for paying for the tx's gas)
-    //   - It has to be mined, so it isn't immediately confirmed.
-    //     Note that some testing networks, like Hardhat Network, do mine
-    //     transactions immediately, but your dapp should be prepared for
-    //     other networks.
-    //   - It can fail once mined.
-    //
-    // This method handles all of those things, so keep reading to learn how to
-    // do it.
-
+  async _mint(uri) {
     try {
       // If a transaction fails, we save that error in the component's state.
       // We only save one such error, so before sending a second transaction, we
@@ -306,7 +297,11 @@ export class Dapp extends React.Component {
 
       // We send the transaction, and save its hash in the Dapp's state. This
       // way we can indicate that we are waiting for it to be mined.
-      const tx = await this._token.transfer(to, amount);
+      const overrideOptions = {        
+        value: ethers.utils.parseEther('1.0')
+      };
+
+      const tx = await this._token.mintToken(uri, overrideOptions);
       this.setState({ txBeingSent: tx.hash });
 
       // We use .wait() to wait for the transaction to be mined. This method
@@ -340,7 +335,7 @@ export class Dapp extends React.Component {
       this.setState({ txBeingSent: undefined });
     }
   }
-
+  
   // This method just clears part of the state.
   _dismissTransactionError() {
     this.setState({ transactionError: undefined });
@@ -377,5 +372,33 @@ export class Dapp extends React.Component {
     });
 
     return false;
+  }
+
+  handleOpenFarmer(){
+   // console.log(this)
+    //e.preventDefault();
+    this.setState({
+      openFarmer: true,
+      openDonor: false,
+      openNft: false,
+    });
+  }
+
+  handleOpenDonor(){
+    //e.preventDefault();
+    this.setState({
+      openFarmer: false,
+      openDonor: true,
+      openNft: false,
+    });
+  }
+
+  handleOpenNft(){
+    //e.preventDefault();
+    this.setState({
+      openFarmer: false,
+      openDonor: false,
+      openNft: true,
+    });
   }
 }

@@ -7,26 +7,21 @@ import "hardhat/console.sol";
 
 contract Token is ERC721, Ownable {
     address payable public _owner;
-    mapping(uint256 => bool) public minted;
-
-    event Mint(address from, address to, uint256 id);
 
     constructor() ERC721("Decentreelized Token", "TRE") {
         _owner = msg.sender;
     }
 
-    function mintToken(
-        address _to,
-        uint256 _tokenID,
-        string memory _tokenURI
-    ) public returns (bool) {
+    function mintToken(string memory _tokenURI) 
+        public payable returns (bool) {
+
         uint256 _tokenId = totalSupply() + 1;
 
-        _mint(address(this), _tokenId);
+        _mint(msg.sender, _tokenId);
         _setTokenURI(_tokenId, _tokenURI);
 
         return true;
 
-        emit Mint(address(0), _to, _tokenId);
+       
     }
 }
