@@ -21,6 +21,7 @@ import { NoTokensMessage } from "./NoTokensMessage";
 import { Map } from "./Map";
 import { DonorView } from "./DonorView";
 import { MyNFT } from "./MyNFT";
+import { Home } from "./Home";
 
 // This is the Hardhat Network id, you might change it in the hardhat.config.js
 // Here's a list of network ids https://docs.metamask.io/guide/ethereum-provider.html#properties
@@ -59,6 +60,7 @@ export class Dapp extends React.Component {
       openFarmer: true,
       openDonor: false,
       openNft: false,
+      openHome: false,
     };
 
     this.state = this.initialState;
@@ -115,6 +117,9 @@ export class Dapp extends React.Component {
         <li class="nav-item">
           <a class="nav-link" href="#" onClick={() => this.handleOpenNft()} >My NFTrees</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" onClick={() => this.handleOpenHome()} >Home</a>
+        </li>        
       </ul>
 
 
@@ -169,6 +174,7 @@ export class Dapp extends React.Component {
         {this.state.openFarmer ? <div ><Map farmerAddress={this.state.selectedAddress}/></div> : ''}
         {this.state.openDonor ? <div ><DonorView ownerAddress={this.state.selectedAddress}  mint={(uri) => this._mint(uri)} /></div> : ''}
         {this.state.openNft ? <div ><MyNFT ownerAddress={this.state.selectedAddress}/></div> : ''}
+        {this.state.openHome ? <div ><Home/></div> : ''}
           </div>
           <div className="col-1"></div>
 
@@ -381,6 +387,7 @@ export class Dapp extends React.Component {
       openFarmer: true,
       openDonor: false,
       openNft: false,
+      openHome: false,
     });
   }
 
@@ -390,6 +397,7 @@ export class Dapp extends React.Component {
       openFarmer: false,
       openDonor: true,
       openNft: false,
+      openHome: false,
     });
   }
 
@@ -399,6 +407,18 @@ export class Dapp extends React.Component {
       openFarmer: false,
       openDonor: false,
       openNft: true,
+      openHome: false,
     });
   }
+
+  handleOpenHome(){
+    //e.preventDefault();
+    this.setState({
+      openFarmer: false,
+      openDonor: false,
+      openNft: false,
+      openHome: true,
+    });
+  }
+  
 }

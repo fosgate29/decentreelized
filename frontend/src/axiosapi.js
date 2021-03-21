@@ -31,6 +31,10 @@ const destroynft = id => {
   return axios.delete(endpoint + `/nfts12/${id}`);
 };
 
+const getPOPEvent = () => {
+  return axios.get('https://api.poap.xyz/metadata/1334/478672');
+};
+
 export default {
   nfts: {
     getAll,
@@ -39,6 +43,7 @@ export default {
     mintedNft,
     destroynft,
     getAllMintedFromFarmer,
-    getAllMintedFromOwner
+    getAllMintedFromOwner,
+    getPOPEvent
   }
 };
