@@ -1,6 +1,12 @@
 Built using https://github.com/nomiclabs/hardhat-hackathon-boilerplate <img src="/frontend/public/logo192.png" alt="HardHat log" width="50px"/>
 
-
+- What3Words - https://what3words.com/
+- Fleek - https://fleek.co/ (To storage files)
+- GoogleMaps - https://www.google.com/maps 
+- jsonbox - https://jsonbox.io/  (To simulate a database service)
+- axios - https://github.com/axios/axios (To get data from jsonbox)
+- i18n - https://github.com/i18next/react-i18next (For internalization)
+- React - front end
 
 # decentreelized
 NFT Ethglobal Hackathon
