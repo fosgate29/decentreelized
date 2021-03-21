@@ -19,7 +19,7 @@ contract Token is ERC721, Ownable {
         address _to,
         uint256 _tokenID,
         string memory _tokenURI
-    ) public onlyOwner returns (bool) {
+    ) public returns (bool) {
         uint256 _tokenId = totalSupply() + 1;
 
         _mint(address(this), _tokenId);
@@ -27,5 +27,6 @@ contract Token is ERC721, Ownable {
 
         return true;
 
-        emit Mint(address(0), to, _tokenId);
+        emit Mint(address(0), _to, _tokenId);
     }
+}
